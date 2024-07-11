@@ -19,7 +19,7 @@ export default function Home() {
                         <p className='justify-items-end text-dark-600 xl:text-left'>
                             &copy; 2024 Samson. All rights reserved.
                         </p>
-                        <Link href="/?admin=true" className='text-green-500'>
+                        <Link href="/?admin=true" className='text-green-500 font-semibold'>
                             Admin
                         </Link>
                     </div>
