@@ -75,3 +75,7 @@ export function encryptKey(passkey: string) {
 export function decryptKey(passkey: string) {
     return atob(passkey);
 }
+
+export function truncateLastName(name: string) {
+    return name.split(" ")[0];
+}

@@ -14,8 +14,13 @@ export interface CustomProps {
     disabled?: boolean,
     dateFormats?: string[],
     showTimeSelect?: boolean,
-    children?: boolean,
+    children?: React.ReactNode,
     renderSkeleton?: (field: any) => React.ReactNode,
+}
+
+export type FileUploaderProps = {
+    files: File[];
+    onChange: (files: File[]) => void;
 }
 
 export enum FormFieldType {

@@ -30,7 +30,7 @@ const PatientForm = () => {
 
     async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
         setIsLoading(true);
-        console.log("I'm here?")
+
         try {
             const userData = { name, email, phone };
             const user: User = await createUser(userData);

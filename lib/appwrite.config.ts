@@ -14,7 +14,13 @@ export const {
 
 const client: sdk.Client = new sdk.Client();
 
-client.setEndpoint(ENDPOINT!).setProject(APPWRITE_PROJECT_ID!).setKey(APPWRITE_API_KEY!);
+/* TODO: SORT THIS OUT WITH THE ENVIRONMENT VARIABLES*/
+
+client.setEndpoint('https://cloud.appwrite.io/v1')
+    .setProject('668e21b9003687decf31')
+    .setKey('1478ac38c31b089762a90218beaa3f038df4c549798949ed5670b6ea9a0f7fbc0c05ae6970a24d757e3af812ea8be848de48f87c97df197488a' +
+        '809551d9b158474e84541288b7b577551752f14a0de1192135a41bd66002fd08eeae459a350da69929043cb16d2f3dc6a83a5dbde4073cb72b9765f9' +
+        '6506d9608db992d488155');
 
 export const databases = new sdk.Databases(client);
 export const storage = new sdk.Storage(client);

@@ -5,22 +5,22 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const jakartaSans = FontSans({
+const fontSans = FontSans({
     subsets: ["latin"],
     weight: ['300', '400', '500', '600', '700'],
-    variable: '--font--sans',
+    variable: '--font-sans',
 });
 
 export const metadata: Metadata = {
-    title: "NHS CarePlus",
+    title: "NHS CarePulse",
     description: "A healthcare management system for NHS hospitals.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
     return (
         <html lang="en">
-            <body className={cn('min-h-screen bg-dark-300 font-sans antialiased', jakartaSans.variable)}>
-                <ThemeProvider attribute="class" defaultTheme="system">
+            <body className={cn('min-h-screen bg-dark-300 font-sans antialiased', fontSans.variable)}>
+                <ThemeProvider attribute="class" defaultTheme="dark">
                     {children}
                 </ThemeProvider>
             </body>
