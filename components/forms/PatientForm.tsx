@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/actions/patient.actions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { toast } from "sonner";
 
 const PatientForm = () => {
     const router: AppRouterInstance = useRouter();
@@ -35,12 +36,12 @@ const PatientForm = () => {
             const userData = { name, email, phone };
             const user: User = await createUser(userData);
 
-            if (user) {
-                //setIsLoading(false);
-                router.push(`/patients/${user.$id}/register`);
-            }
+            toast.success("User created successfully", { duration: 5000 })
+
+            if (user) router.push(`/patients/${user.$id}/register`);
 
         } catch (error: any) {
+            toast.error("An error occurred while creating a new user", { duration: 5000,  });
             console.error("There's been an error: ", error.message);
         }
 

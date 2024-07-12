@@ -5,57 +5,86 @@ import { useForm } from "react-hook-form"
 
 import { z } from "zod"
 import { Form, FormControl } from "@/components/ui/form"
-import { UserFormValidation } from "@/lib/validations"
+import { PatientFormValidation } from "@/lib/validations"
 import CustomFormField from "@/components/CustomFormField";
 import { FormFieldType, User } from "@/types/index.d";
 import SubmitButton from "@/components/SubmitButton";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUser } from "@/lib/actions/patient.actions";
+import { registerPatient } from "@/lib/actions/patient.actions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { truncateLastName } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Doctors, GenderOptions, IdentificationTypes } from "@/constants";
+import { Doctors, GenderOptions, IdentificationTypes, PatientFormDefaultValues } from "@/constants";
 import { Label } from "@/components/ui/label";
 import { SelectItem } from "@/components/ui/select";
 import Image from "next/image";
 import FileUploader from "../FileUploader"
+import { toast } from "sonner";
 
 
 const RegisterForm = ({ user }: { user: User }) => {
     const router: AppRouterInstance = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const form = useForm<z.infer<typeof UserFormValidation>>({
-        resolver: zodResolver(UserFormValidation),
+    const form = useForm<z.infer<typeof PatientFormValidation>>({
+        resolver: zodResolver(PatientFormValidation),
         defaultValues: {
+            ...PatientFormDefaultValues,
             name: "",
             email: "",
             phone: "",
         },
     });
 
-    async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
+    async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
         setIsLoading(true);
+        console.log(" We're here!!! ")
+        let formData;
+
+        /* Creating a document readable by the browser */
+        if (values.identificationDocument && values.identificationDocument.length > 0) {
+            const blobFile = new Blob([values.identificationDocument[0]], {
+                type: values.identificationDocument[0].type,
+            });
+
+            formData = new FormData();
+            formData.append("blobFile", blobFile);
+            formData.append('fileName', values.identificationDocument[0].name);
+        }
 
         try {
-            const userData = { name, email, phone };
-            const user: User = await createUser(userData);
-
-            if (user) {
-                //setIsLoading(false);
-                router.push(`/patients/${user.$id}/register`);
+            /* Send over to Appwrite */
+            const patientData = {
+                ...values,
+                userId: user.$id,
+                birthDate: new Date(values.birthDate),
+                identificationDocument: formData,
             }
 
+            // @ts-ignore
+            const patient = await registerPatient(patientData);
+
+            toast.success("Patient registered successfully", {
+                duration: 5000,
+                description: "Welcome to the Matrix!"
+            });
+
+            if (patient) router.push(`/patients/${user.$id}/new-appointment`);
+
         } catch (error: any) {
+            toast.error("Patient Registration Failed", {
+                duration: 5000,
+                description: "An error occurred while registering the patient. Please try again."
+            })
+
             console.error("There's been an error: ", error.message);
         }
 
-        setIsLoading(false);
+        //setIsLoading(false);
     }
 
-    // @ts-ignore
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 flex-1">
@@ -63,7 +92,6 @@ const RegisterForm = ({ user }: { user: User }) => {
                     <h1 className='header'>Welcome {truncateLastName(user.name)} &#x1F44B;</h1>
                     <p className='text-dark-700'>Let us know more about yourself.</p>
                 </section>
-
 
                 {/* PERSONAL INFORMATION SECTION */}
                 <section className='space-y-4'>
@@ -214,14 +242,14 @@ const RegisterForm = ({ user }: { user: User }) => {
                     <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control}  name='treatmentConsent'
                                 label='I consent to receive treatment for my health condition.' />
 
-                    <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control} name='privacyConsent'
+                    <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control} name='diclosureConsent'
                                 label='I consent to the use and disclosure of my health information for treatment purposes.' />
 
                     <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control} name='privacyConsent'
                                 label='I acknowledge that I have reviewed and agree to the privacy policy' />
                 </section>
 
-                <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+                <SubmitButton isLoading={isLoading}>Register</SubmitButton>
             </form>
         </Form>
     );

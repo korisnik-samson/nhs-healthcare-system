@@ -68,7 +68,7 @@ const RenderInput = ({ field, props }: IRenderInputProps) => {
             return (
                 <div>
                     <FormControl>
-                        <PhoneInput defaultCountry='RS' placeholder={props.placeHolder} international
+                        <PhoneInput defaultCountry='GB' placeholder={props.placeHolder} international
                             withCountryCallingCode value={field.value as E164Number | undefined} onChange={field.onChange}
                             className='input-phone' />
                     </FormControl>
