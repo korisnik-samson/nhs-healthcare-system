@@ -20,3 +20,18 @@ export const createAppointment = async (appointment: CreateAppointmentParams) =>
         console.error("An error occurred while creating a new appointment: ", error.message);
     }
 }
+
+export const getAppointments = async (appointmentId: string) => {
+    try {
+        const appointment = await databases.getDocument(
+            credentials.APPWRITE_DATABASE_ID,
+            credentials.APPWRITE_APPOINTMENT_COLLECTION_ID,
+            appointmentId
+        );
+
+        return parseStringify(appointment);
+
+    } catch (error: Error | any) {
+        console.error("An error occurred while fetching appointments: ", error.message);
+    }
+}

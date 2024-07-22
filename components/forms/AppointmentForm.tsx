@@ -84,7 +84,7 @@ const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
             }
 
         } catch (error: any) {
-            toast.error("An error occurred while creating a new user", { duration: 5000,  });
+            toast.error("An error occurred while creating a new user", { duration: 5000 });
             console.error("There's been an error: ", error.message);
         }
 
