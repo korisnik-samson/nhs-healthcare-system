@@ -7,17 +7,17 @@ import { z } from "zod"
 import { Form } from "@/components/ui/form"
 import { getAppointmentSchema } from "@/lib/validations"
 import CustomFormField from "@/components/CustomFormField";
-import { FormFieldType, IAppointmentForm, Status, User } from "@/types/index.d";
+import { FormFieldType, IAppointmentForm, Status } from "@/types/index.d";
 import SubmitButton from "@/components/SubmitButton";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUser } from "@/lib/actions/patient.actions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { toast } from "sonner";
 import { Doctors } from "@/constants";
 import { SelectItem } from "@/components/ui/select";
 import Image from "next/image";
+import { createAppointment } from "@/lib/actions/appointment.actions";
 
 
 const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
@@ -51,6 +51,7 @@ const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
                 status = 'pending';
                 break;
 
+                // careful with this one
             case 'cancel':
                 status = 'cancelled';
                 break;
@@ -66,14 +67,21 @@ const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
                     userId,
                     patient: patientId,
                     primaryPhysician: values.primaryPhysician,
-                    reason: values.reason,
+                    reason: values.reason!,
                     schedule: new Date(values.schedule),
                     status: status as Status,
-                    note: values.note,
+                    note: values.note!,
                 };
-            }
 
-            //const appointment = await createAppointment(appointmentData);
+                const appointment = await createAppointment(appointmentData);
+
+                if (appointment) {
+                    form.reset();
+                    toast.success("Appointment created successfully", { duration: 5000 });
+
+                    router.push(`/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`);
+                }
+            }
 
         } catch (error: any) {
             toast.error("An error occurred while creating a new user", { duration: 5000,  });
