@@ -10,7 +10,7 @@ const SubmitButton = ({ isLoading, className, children }: IButtonProps) => {
             {isLoading ? (
                 <div className='flex items-center gap-4'>
                     <Loader size={24} className='animate-spin' />
-                    Loading...
+                    Hang on...
                 </div>
             ) : children}
         </Button>

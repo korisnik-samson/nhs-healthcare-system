@@ -16,6 +16,7 @@ import { createUser } from "@/lib/actions/patient.actions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { toast } from "sonner";
 
+
 const PatientForm = () => {
     const router: AppRouterInstance = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,6 +32,9 @@ const PatientForm = () => {
 
     async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
         setIsLoading(true);
+
+        // debugging purposes TODO: remove
+        toast.info("Creating user...", { duration: 5000 });
 
         try {
             const userData = { name, email, phone };

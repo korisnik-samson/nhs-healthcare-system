@@ -55,7 +55,7 @@ const RenderInput = ({ field, props }: IRenderInputProps) => {
                     <Image src='/assets/icons/calendar.svg' alt='calendar' height={24} width={24} className='ml-2' />
                     <FormControl>
                         <DatePicker selected={field.value} onChange={(date) => field.onChange(date)}
-                            dateFormat={props.dateFormats ?? 'MM/dd/yyyy'} showTimeSelect={props.showTimeSelect ?? false}
+                            dateFormat={props.dateFormat ?? 'MM/dd/yyyy'} showTimeSelect={props.showTimeSelect ?? false}
                             timeInputLabel="Time:" wrapperClassName='date-picker'/>
                     </FormControl>
                 </div>
@@ -111,7 +111,7 @@ const CustomFormField = (props: CustomProps) => {
                 <FormItem className='flex-1'>
                     {fieldType !== FormFieldType.CHECKBOX && label && (
                         <FormLabel htmlFor={name} className='text-dark-700'>
-                                {label}
+                            {label}
                         </FormLabel>
                     )}
                     <RenderInput field={field} props={props} />

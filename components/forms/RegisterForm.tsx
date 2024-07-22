@@ -32,20 +32,24 @@ const RegisterForm = ({ user }: { user: User }) => {
         resolver: zodResolver(PatientFormValidation),
         defaultValues: {
             ...PatientFormDefaultValues,
-            name: "",
-            email: "",
-            phone: "",
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
         },
     });
 
-    async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
+    const onSubmit = async(values: z.infer<typeof PatientFormValidation>) => {
+        // debugging reasons
+        toast.info("Registering patient...", { duration: 5000 });
+        console.log("Form values: ", values);
+
         setIsLoading(true);
-        console.log(" We're here!!! ")
+
         let formData;
 
-        /* Creating a document readable by the browser */
+        /* Creating a document readable by the browser... called a BLOB */
         if (values.identificationDocument && values.identificationDocument.length > 0) {
-            const blobFile = new Blob([values.identificationDocument[0]], {
+            const blobFile: Blob = new Blob([values.identificationDocument[0]], {
                 type: values.identificationDocument[0].type,
             });
 
@@ -60,6 +64,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                 ...values,
                 userId: user.$id,
                 birthDate: new Date(values.birthDate),
+                // potential bug here
                 identificationDocument: formData,
             }
 
@@ -82,7 +87,7 @@ const RegisterForm = ({ user }: { user: User }) => {
             console.error("There's been an error: ", error.message);
         }
 
-        //setIsLoading(false);
+        setIsLoading(false);
     }
 
     return (
@@ -100,59 +105,58 @@ const RegisterForm = ({ user }: { user: User }) => {
                     </div>
                     <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
                                      name="name" label='Full Name' placeHolder='John Doe'
-                                     iconSrc='/assets/icons/user.svg' iconAlt='user'/>
+                                     iconSrc='/assets/icons/user.svg' iconAlt='user' />
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
                                          name="email" label='Email' placeHolder='johndoe@domain.com'
-                                         iconSrc='/assets/icons/email.svg' iconAlt='email'/>
+                                         iconSrc='/assets/icons/email.svg' iconAlt='email' />
 
                         <CustomFormField fieldType={FormFieldType.PHONE_INPUT} control={form.control}
-                                         name="phone" label='Phone Number' placeHolder='(555) 123 4567'/>
+                                         name="phone" label='Phone Number' placeHolder='(555) 123 4567' />
                     </div>
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.DATE_PICKER} control={form.control}
-                                         name="birthDate" label='Date of Birth'/>
+                                         name="birthDate" label='Date of Birth' />
 
                         <CustomFormField fieldType={FormFieldType.SKELETON} control={form.control}
-                                         name="gender" label='Gender' renderSkeleton={(field) => (
-                            <FormControl>
-                                <RadioGroup className='flex h-11 gap-6 xl:justify-between'
-                                            onValueChange={field.onChange} defaultValue={field.value}>
-                                    {GenderOptions.map((option) => (
-                                        <div key={option} className='radio-group'>
-                                            <RadioGroupItem value={option} id={option}/>
-                                            <Label htmlFor={option} className='cursor-pointer'>
-                                                {option}
-                                            </Label>
-                                        </div>
-                                    ))}
-                                </RadioGroup>
-                            </FormControl>
-                        )}
+                            name="gender" label='Gender' renderSkeleton={(field) => (
+                                <FormControl>
+                                    <RadioGroup className='flex h-11 gap-6 xl:justify-between'
+                                                onValueChange={field.onChange} defaultValue={field.value}>
+                                        {GenderOptions.map((option) => (
+                                            <div key={option} className='radio-group'>
+                                                <RadioGroupItem value={option} id={option} />
+                                                <Label htmlFor={option} className='cursor-pointer'>
+                                                    {option}
+                                                </Label>
+                                            </div>
+                                        ))}
+                                    </RadioGroup>
+                                </FormControl>
+                            )}
                         />
                     </div>
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
-                                         name="address" label='Address' placeHolder='14 Downing Street, London'/>
+                                         name="address" label='Address' placeHolder='14 Downing Street, London' />
 
                         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
-                                         name="occupation" label='Occupation' placeHolder='Software Engineer'/>
+                                         name="occupation" label='Occupation' placeHolder='Software Engineer' />
                     </div>
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
                                          name="emergencyContactName" label='Emergency Contact Name'
-                                         placeHolder={`Guardian's Name`}/>
+                                         placeHolder={`Guardian's Name`} />
 
                         <CustomFormField fieldType={FormFieldType.PHONE_INPUT} control={form.control}
                                          name="emergencyContactNumber" label='Emergency Contact Number'
-                                         placeHolder='(555) 123 4567'/>
+                                         placeHolder='(555) 123 4567' />
                     </div>
                 </section>
-
 
                 {/* MEDICAL INFORMATION SECTION */}
                 <section className='space-y-4'>
@@ -166,7 +170,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                             <SelectItem key={doctor.name} value={doctor.name}>
                                 <div className="flex cursor-pointer items-center gap-2">
                                     <Image src={doctor.image} width={32}
-                                           height={32} alt="doctor" className="rounded-full border border-dark-500"/>
+                                           height={32} alt="doctor" className="rounded-full border border-dark-500" />
                                     <p>{doctor.name}</p>
                                 </div>
                             </SelectItem>
@@ -175,30 +179,30 @@ const RegisterForm = ({ user }: { user: User }) => {
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
-                                         name="insuranceProvider" label='Insurance Provider' placeHolder='Wiener Städtische'/>
+                                         name="insuranceProvider" label='Insurance Provider' placeHolder='Wiener Städtische' />
 
                         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
                                          name="insurancePolicyNumber" label='Insurance Policy Number'
-                                         placeHolder='ABX 123 4567'/>
+                                         placeHolder='ABX 123 4567' />
                     </div>
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.TEXTAREA} control={form.control}
-                                         name="allergies" label='Allergies (if any)' placeHolder='Peanuts, Penicillin, Pollen'/>
+                                         name="allergies" label='Allergies (if any)' placeHolder='Peanuts, Penicillin, Pollen' />
 
                         <CustomFormField fieldType={FormFieldType.TEXTAREA} control={form.control}
                                          name="currentMedication" label='Current Medication (if any)'
-                                         placeHolder='Ibruprofen 400mg, Paracetamol 500mg'/>
+                                         placeHolder='Ibruprofen 400mg, Paracetamol 500mg' />
                     </div>
 
                     <div className='flex flex-col gap-6 xl:flex-row'>
                         <CustomFormField fieldType={FormFieldType.TEXTAREA} control={form.control}
                                          name="familyMedicalHistory" label='Family Medical History'
-                                         placeHolder='Gennetic Diseases or Disorders'/>
+                                         placeHolder='Gennetic Diseases or Disorders' />
 
                         <CustomFormField fieldType={FormFieldType.TEXTAREA} control={form.control}
                                          name="pastMedicalHistory" label='Past Medical History'
-                                         placeHolder='Appendectomy, Tonisillectomy'/>
+                                         placeHolder='Appendectomy, Tonisillectomy' />
                     </div>
                 </section>
 
@@ -227,7 +231,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                                      name="identificationDocument" label='Scanned copy of Identification Document'
                         renderSkeleton={(field) => (
                             <FormControl>
-                                <FileUploader files={field.value} onChange={field.onChange}/>
+                                <FileUploader files={field.value} onChange={field.onChange} />
                             </FormControl>
                         )}
                     />
@@ -242,7 +246,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                     <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control}  name='treatmentConsent'
                                 label='I consent to receive treatment for my health condition.' />
 
-                    <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control} name='diclosureConsent'
+                    <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control} name='disclosureConsent'
                                 label='I consent to the use and disclosure of my health information for treatment purposes.' />
 
                     <CustomFormField fieldType={FormFieldType.CHECKBOX} control={form.control} name='privacyConsent'

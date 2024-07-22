@@ -3,19 +3,25 @@
 import React from "react";
 import { Control } from "react-hook-form";
 
+export interface IAppointmentForm {
+    userId: string;
+    patientId: string;
+    type: 'create' | 'cancel' | 'schedule';
+}
+
 export interface CustomProps {
-    control: Control<any>,
-    fieldType: FormFieldType,
-    name: string,
-    label?: string,
-    placeHolder?: string,
-    iconSrc?: string,
-    iconAlt?: string,
-    disabled?: boolean,
-    dateFormats?: string[],
-    showTimeSelect?: boolean,
-    children?: React.ReactNode,
-    renderSkeleton?: (field: any) => React.ReactNode,
+    control: Control<any>;
+    name: string;
+    label?: string;
+    placeHolder?: string;
+    iconSrc?: string;
+    iconAlt?: string;
+    disabled?: boolean;
+    dateFormat?: string;
+    showTimeSelect?: boolean;
+    children?: React.ReactNode;
+    renderSkeleton?: (field: any) => React.ReactNode;
+    fieldType: FormFieldType;
 }
 
 export type FileUploaderProps = {
