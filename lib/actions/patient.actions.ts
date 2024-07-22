@@ -2,15 +2,13 @@
 
 import { CreateUserParams, RegisterUserParams } from "@/types/index.d";
 import { databases, storage, users } from "@/lib/appwrite.config";
-import { ID, Query } from "node-appwrite";
+import { ID, Models, Query, InputFile } from "node-appwrite";
 import { credentials, parseStringify } from "@/lib/utils";
-
-import { InputFile } from "node-appwrite/file";
 
 export const createUser = async(user: CreateUserParams) => {
     try {
         // Create a new user from the provided data
-        const newUser = await users.create(
+        const newUser: Models.User<Models.Preferences> = await users.create(
             ID.unique(), user.email,
             user.phone, undefined,user.name
         );
@@ -49,21 +47,27 @@ export const registerPatient = async({ identificationDocument, ...patient }: Reg
         let file;
 
         if (identificationDocument) {
-            const inputFile = InputFile.fromBuffer(
-                identificationDocument?.get('buffer') as Blob,
-                identificationDocument?.get('name') as string
+            const inputFile = identificationDocument && await InputFile.fromBlob(
+                identificationDocument?.get('blobFile') as Blob,
+                identificationDocument?.get('fileName') as string
             );
 
             file = await storage.createFile(credentials.NEXT_PUBLIC_BUCKET_ID, ID.unique(), inputFile);
         }
 
-        const newPatient = await databases.createDocument(
+        // debugging purposes TODO: remove
+        console.log({
+            identificationDocumentId: file?.$id || null,
+            identificationDocumentUrl: `${credentials.NEXT_PUBLIC_ENDPOINT}/storage/buckets/${credentials.NEXT_PUBLIC_BUCKET_ID}/files/${file?.$id}/view??project=${credentials.APPWRITE_PROJECT_ID!}`,
+        })
+
+        const newPatient: Models.Document = await databases.createDocument(
             credentials.APPWRITE_DATABASE_ID,
             credentials.APPWRITE_PATIENT_COLLECTION_ID,
             ID.unique(),
             {
                 identificationDocumentId: file?.$id || null,
-                identificationDocumentUrl: `${credentials.NEXT_PUBLIC_ENDPOINT}/storage/buckets/${credentials.NEXT_PUBLIC_BUCKET_ID}/files/${file?.$id}/view?project=${credentials.APPWRITE_PROJECT_ID!}`,
+                identificationDocumentUrl: `${credentials.NEXT_PUBLIC_ENDPOINT}/storage/buckets/${credentials.NEXT_PUBLIC_BUCKET_ID}/files/${file?.$id}/view??project=${credentials.APPWRITE_PROJECT_ID!}`,
                 ...patient
             }
         );
@@ -74,5 +78,22 @@ export const registerPatient = async({ identificationDocument, ...patient }: Reg
 
     } catch (error: Error | any) {
         console.error("An error occurred while registering a new patient: ", error.message);
+    }
+}
+
+export const getPatient = async(patientId: string) => {
+    try {
+        const patients = await databases.listDocuments(
+            credentials.APPWRITE_DATABASE_ID,
+            credentials.APPWRITE_PATIENT_COLLECTION_ID,
+            [
+                Query.equal('userId', patientId)
+            ]
+        );
+
+        return parseStringify(patients.documents[0]);
+
+    } catch (error: Error | any) {
+        console.error("An error occurred while fetching user data: ", error.message);
     }
 }
