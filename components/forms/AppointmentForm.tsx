@@ -17,10 +17,10 @@ import { toast } from "sonner";
 import { Doctors } from "@/constants";
 import { SelectItem } from "@/components/ui/select";
 import Image from "next/image";
-import { createAppointment } from "@/lib/actions/appointment.actions";
+import { createAppointment, updateAppointment } from "@/lib/actions/appointment.actions";
 
 
-const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
+const AppointmentForm = ({ userId, patientId, type, appointment, setOpen }: IAppointmentForm) => {
     const router: AppRouterInstance = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -29,15 +29,16 @@ const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
     const form = useForm<z.infer<typeof AppointmentFormValidation>>({
         resolver: zodResolver(AppointmentFormValidation),
         defaultValues: {
-            primaryPhysician: "",
-            schedule: new Date(),
-            reason: "",
-            note: "",
-            cancellationReason: "",
+            primaryPhysician: appointment ? appointment.primaryPhysician : '',
+            schedule: appointment ? new Date(appointment.schedule) : new Date(),
+            reason: appointment ? appointment.reason : '',
+            note: appointment ? appointment.note : '',
+            cancellationReason: appointment?.cancellationReason || '',
         },
     });
 
     async function onSubmit(values: z.infer<typeof AppointmentFormValidation>) {
+        console.log('IM SUBMITTING', values, {type});
         setIsLoading(true);
 
         let status;
@@ -78,8 +79,33 @@ const AppointmentForm = ({ userId, patientId, type }: IAppointmentForm) => {
                 if (appointment) {
                     form.reset();
                     toast.success("Appointment created successfully", { duration: 5000 });
-
                     router.push(`/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`);
+                }
+
+                // if the type is not create, then update (schedule or cancel) the appointment
+            } else {
+                // debugging purposes
+                console.log('IM UPDATING');
+                const appointmentToUpdate = {
+                    userId,
+                    appointmentId: appointment?.$id!,
+                    appointment: {
+                        primaryPhysician: appointment?.primaryPhysician,
+                        schedule: new Date(values?.schedule),
+                        reason: appointment?.reason,
+                        status: status as Status,
+                        cancellationReason: values?.cancellationReason,
+                    },
+                    type
+                }
+
+                // @ts-ignore
+                const updatedAppointment = await updateAppointment(appointmentToUpdate);
+
+                if (updatedAppointment) {
+                    setOpen && setOpen(false);
+                    form.reset();
+                    toast.success("Appointment updated successfully", { duration: 5000 });
                 }
             }
 

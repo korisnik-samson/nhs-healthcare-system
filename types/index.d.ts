@@ -2,11 +2,34 @@
 
 import React from "react";
 import { Control } from "react-hook-form";
+import { ColumnDef } from "@tanstack/react-table";
+import { Appointment } from "@/types/appwrite.types";
 
 export interface IAppointmentForm {
     userId: string;
     patientId: string;
     type: 'create' | 'cancel' | 'schedule';
+    appointment?: Appointment;
+    setOpen?: (open: boolean) => void;
+}
+
+export interface IStatCardProps {
+    type: 'appointments' | 'pending' | 'cancelled';
+    count: number;
+    label: string;
+    icon: string;
+}
+
+export interface IAppointmentModalProps {
+    type: 'schedule' | 'cancel';
+    patientId: string;
+    userId: string;
+    appointment?: Appointment;
+}
+
+export interface DataTableProps<TData, TValue> {
+    columns: ColumnDef<TData, TValue>[]
+    data: TData[]
 }
 
 export interface CustomProps {
