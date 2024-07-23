@@ -12,6 +12,7 @@ const Page = async ({ params: { userId }, searchParams }: SearchParamProps) => {
     const appointmentId = (searchParams?.appointmentId as string) || '';
     const appointment = await getAppointments(appointmentId);
 
+    // find the doctor that matches the primaryPhysician in the appointment details
     const doctor = Doctors.find((doctor) => doctor.name === appointment?.primaryPhysician);
 
     return (
@@ -32,11 +33,11 @@ const Page = async ({ params: { userId }, searchParams }: SearchParamProps) => {
                 </section>
 
                 <section className='request-details'>
-                    <p>Requested Appointment Details</p>
+                    <p>Requested appointment details</p>
                     <div className='flex items-center gap-3'>
                         {/* Render the details of the selected doctor */}
                         <Image src={doctor?.image!} alt='doctor' width={600} height={600} className='size-6' />
-                        <p className='whitespace-nowrap'> Dr. {doctor?.name}</p>
+                        <p className='whitespace-nowrap'>Dr. {doctor?.name}</p>
                     </div>
                     <div className='flex gap-2'>
                         <Image src='/assets/icons/calendar.svg' alt='calendar' width={24} height={24} />

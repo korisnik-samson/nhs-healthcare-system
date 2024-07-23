@@ -89,5 +89,6 @@ export const credentials = {
     APPWRITE_APPOINTMENT_COLLECTION_ID: '668e22c9000031c6362b',
     NEXT_PUBLIC_BUCKET_ID: '668e22e8001d20d40c90',
     NEXT_PUBLIC_LOCAL_ENDPOINT: 'localhost:3000',
-    NEXT_PUBLIC_ENDPOINT: 'https://cloud.appwrite.io/v1'
+    NEXT_PUBLIC_ENDPOINT: 'https://cloud.appwrite.io/v1',
+    NEXT_PUBLIC_PASSKEY:'932005'
 }
