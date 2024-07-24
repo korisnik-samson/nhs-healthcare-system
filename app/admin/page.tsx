@@ -5,6 +5,9 @@ import StatCard from "@/components/StatCard";
 import { getRecentAppointmentList } from "@/lib/actions/appointment.actions";
 import { DataTable } from "@/components/table/DataTable";
 import { columns } from "@/components/table/columns";
+import { Button } from "@/components/ui/button";
+import { RefreshCcwIcon } from "lucide-react";
+import RefreshButton from "@/components/RefreshButton";
 
 const Page = async () => {
     const appointments = await getRecentAppointmentList();
@@ -24,6 +27,8 @@ const Page = async () => {
                 <section className='w-full space-y-4'>
                     <h1 className='header'>Welcome</h1>
                     <p className='text-dark-700'>Start the day with managing new appointments</p>
+
+                    <RefreshButton />
                 </section>
 
                 <section className='admin-stat'>
