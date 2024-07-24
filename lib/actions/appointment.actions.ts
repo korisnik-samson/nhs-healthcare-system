@@ -83,7 +83,7 @@ export const updateAppointment = async ({ appointmentId, userId, appointment, ty
             appointment
         );
 
-        if (!updatedAppointment) throw new Error("Appointment not found");
+        if (!updatedAppointment) throw Error("Appointment not found");
 
         // TODO: SMS notification
 

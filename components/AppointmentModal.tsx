@@ -25,7 +25,8 @@ const AppointmentModal = ({ type, patientId, userId, appointment }: IAppointment
                     </DialogDescription>
                 </DialogHeader>
 
-                <AppointmentForm type={type} userId={userId} patientId={patientId} appointment={appointment} />
+                <AppointmentForm type={type} userId={userId} patientId={patientId}
+                                 appointment={appointment} setOpen={setOpen} />
             </DialogContent>
         </Dialog>
     );

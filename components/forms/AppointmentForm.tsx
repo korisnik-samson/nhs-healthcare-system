@@ -19,7 +19,6 @@ import { SelectItem } from "@/components/ui/select";
 import Image from "next/image";
 import { createAppointment, updateAppointment } from "@/lib/actions/appointment.actions";
 
-
 const AppointmentForm = ({ userId, patientId, type, appointment, setOpen }: IAppointmentForm) => {
     const router: AppRouterInstance = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,7 +29,7 @@ const AppointmentForm = ({ userId, patientId, type, appointment, setOpen }: IApp
         resolver: zodResolver(AppointmentFormValidation),
         defaultValues: {
             primaryPhysician: appointment ? appointment.primaryPhysician : '',
-            schedule: appointment ? new Date(appointment.schedule) : new Date(),
+            schedule: appointment ? new Date(appointment.schedule) : new Date(Date.now()),
             reason: appointment ? appointment.reason : '',
             note: appointment ? appointment.note : '',
             cancellationReason: appointment?.cancellationReason || '',
