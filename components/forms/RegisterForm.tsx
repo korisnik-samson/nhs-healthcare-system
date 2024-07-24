@@ -23,7 +23,6 @@ import Image from "next/image";
 import FileUploader from "../FileUploader"
 import { toast } from "sonner";
 
-
 const RegisterForm = ({ user }: { user: User }) => {
     const router: AppRouterInstance = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);

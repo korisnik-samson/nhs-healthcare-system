@@ -4,8 +4,13 @@ import RegisterForm from "@/components/forms/RegisterForm";
 import { getUser } from "@/lib/actions/patient.actions";
 import { SearchParamProps } from "@/types";
 
+import * as Sentry from '@sentry/nextjs'
+
 const Page = async ({ params: { userId } }: SearchParamProps) => {
     const user = await getUser(userId);
+
+    // Track user viewing the registration page
+    Sentry.metrics.set('user_view_register', user.name);
 
     return (
         <div className='flex h-screen max-h-screen'>
