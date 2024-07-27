@@ -1,16 +1,20 @@
 import React from 'react'
 import Image from 'next/image'
 import RegisterForm from "@/components/forms/RegisterForm";
-import { getUser } from "@/lib/actions/patient.actions";
+import { getPatient, getUser } from "@/lib/actions/patient.actions";
 import { SearchParamProps } from "@/types";
 
 import * as Sentry from '@sentry/nextjs'
+import { redirect } from "next/navigation";
 
 const Page = async ({ params: { userId } }: SearchParamProps) => {
     const user = await getUser(userId);
+    const patient = await getPatient(userId);
+
+    if (patient) redirect(`/patients/${userId}/new-appointment`);
 
     // Track user viewing the registration page
-    Sentry.metrics.set('user_view_register', user.name);
+    //Sentry.metrics.set('user_view_register', patient.name!);
 
     return (
         <div className='flex h-screen max-h-screen'>

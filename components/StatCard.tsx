@@ -12,7 +12,7 @@ const StatCard = ({ type, count = 0, label, icon }: IStatCardProps) => {
         })}>
 
             <div className='flex item-center gap-4'>
-                <Image src={icon} alt={label} height={32} width={32} className='size-8 w-fit'/>
+                <Image src={icon} alt={label} height={32} width={32} className='text-white size-8 w-fit'/>
                 <h2 className='text-32-bold text-white'>{count}</h2>
             </div>
 

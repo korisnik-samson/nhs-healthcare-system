@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import dedent from "dedent";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -78,6 +79,15 @@ export function decryptKey(passkey: string) {
 
 export function truncateLastName(name: string) {
     return name.split(" ")[0];
+}
+
+export const messageString = (type: string, primaryPhysician: string, appointmentSchedule: Date | string, canellationReaason: string | null): string => {
+    return dedent(`\nHi there, it's CarePulse.
+        ${type === 'schedule' ? `\nYour appointment with Dr. ${primaryPhysician} has been scheduled for\n
+            ${formatDateTime(appointmentSchedule!).dateTime}` 
+            : `\nWe regret to inform you that your appointment with Dr. ${primaryPhysician} has been cancelled for the following reason: ${canellationReaason}`
+        }`
+    )
 }
 
 export const credentials = {

@@ -3,7 +3,7 @@
 import { CreateAppointmentParams, UpdateAppointmentParams } from "@/types";
 import { ID, Models, Query } from "node-appwrite";
 import { databases, messaging } from "@/lib/appwrite.config";
-import { credentials, formatDateTime, parseStringify } from "@/lib/utils";
+import { credentials, messageString, parseStringify } from "@/lib/utils";
 import { Appointment } from "@/types/appwrite.types";
 import { revalidatePath } from "next/cache";
 
@@ -85,13 +85,8 @@ export const updateAppointment = async ({ appointmentId, userId, appointment, ty
 
         if (!updatedAppointment) throw Error("Appointment not found");
 
-        const smsMessage = `Hi, it's CarePulse.
-            ${type === 'schedule' ?
-                `Your appointment with Dr. ${appointment.primaryPhysician} has been scheduled for
-                ${formatDateTime(appointment.schedule!).dateTime}` 
-                : `We regret to inform you that your appointment with Dr. ${appointment.primaryPhysician} 
-                has been cancelled for the following reason: ${appointment.cancellationReason}`
-            }`;
+        const smsMessage = messageString(type, appointment.primaryPhysician,
+            appointment.reason, appointment.cancellationReason);
 
         // Send SMS notification to user
         await sendSMSNotification(userId, smsMessage);
@@ -107,7 +102,7 @@ export const updateAppointment = async ({ appointmentId, userId, appointment, ty
 
 export const sendSMSNotification = async (userId: string, content: string) => {
     try {
-        const message = await messaging.createSms(
+        const message: Models.Message = await messaging.createSms(
             ID.unique(),
             content,
             [],
